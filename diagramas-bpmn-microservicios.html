@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Diagramas BPMN - Microservicios</title>
+<style>
+  :root{
+    --bg:#0d1117;
+    --card:#161b22;
+    --border:#30363d;
+    --text:#e6edf3;
+    --muted:#8b949e;
+    --si:#2ea043;
+    --si-bg:rgba(46,160,67,0.15);
+    --no:#f85149;
+    --no-bg:rgba(248,81,73,0.15);
+    --parcial:#d29922;
+    --parcial-bg:rgba(210,153,34,0.15);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    padding:40px 20px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex;
+    justify-content:center;
+  }
+  .container{
+    width:100%;
+    max-width:780px;
+  }
+  h1{
+    font-size:1.5rem;
+    margin-bottom:4px;
+  }
+  p.subtitle{
+    color:var(--muted);
+    margin-top:0;
+    margin-bottom:28px;
+    font-size:0.95rem;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  thead th{
+    text-align:left;
+    padding:14px 18px;
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    color:var(--muted);
+    border-bottom:1px solid var(--border);
+  }
+  tbody td{
+    padding:14px 18px;
+    border-bottom:1px solid var(--border);
+    font-size:0.95rem;
+  }
+  tbody tr:last-child td{
+    border-bottom:none;
+  }
+  tbody tr:hover{
+    background:rgba(255,255,255,0.02);
+  }
+  .badge{
+    display:inline-block;
+    padding:4px 12px;
+    border-radius:999px;
+    font-size:0.8rem;
+    font-weight:600;
+  }
+  .badge.si{ color:var(--si); background:var(--si-bg); }
+  .badge.no{ color:var(--no); background:var(--no-bg); }
+  .badge.parcial{ color:var(--parcial); background:var(--parcial-bg); }
+  .nota{
+    color:var(--muted);
+    font-size:0.85rem;
+  }
+  .footer-legend{
+    margin-top:22px;
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    font-size:0.85rem;
+    color:var(--muted);
+  }
+  .legend-item{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+  }
+  .dot.si{background:var(--si);}
+  .dot.no{background:var(--no);}
+  .dot.parcial{background:var(--parcial);}
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Diagramas BPMN por microservicio</h1>
+    <p class="subtitle">Estado de necesidad de diagrama de procesos (BPMN) por cada base de datos / microservicio del proyecto.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Microservicio</th>
+          <th>¿Necesita BPMN?</th>
+          <th>Nota</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Gestión académica</td>
+          <td><span class="badge si">Sí</span></td>
+          <td class="nota">—</td>
+        </tr>
+        <tr>
+          <td>Actores</td>
+          <td><span class="badge no">No</span></td>
+          <td class="nota">—</td>
+        </tr>
+        <tr>
+          <td>Auditoría</td>
+          <td><span class="badge no">No</span></td>
+          <td class="nota">—</td>
+        </tr>
+        <tr>
+          <td>Documentos</td>
+          <td><span class="badge no">No</span></td>
+          <td class="nota">—</td>
+        </tr>
+        <tr>
+          <td>IAM</td>
+          <td><span class="badge si">Sí</span></td>
+          <td class="nota">—</td>
+        </tr>
+        <tr>
+          <td>Monitoreo</td>
+          <td><span class="badge si">Sí</span></td>
+          <td class="nota">—</td>
+        </tr>
+        <tr>
+          <td>Referencias</td>
+          <td><span class="badge parcial">Parcial</span></td>
+          <td class="nota">Solo la parte administrativa</td>
+        </tr>
+        <tr>
+          <td>Horario (Scheduling)</td>
+          <td><span class="badge si">Sí</span></td>
+          <td class="nota">—</td>
+        </tr>
+        <tr>
+          <td>Entorno (Environment)</td>
+          <td><span class="badge no">No</span></td>
+          <td class="nota">—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer-legend">
+      <div class="legend-item"><span class="dot si"></span> Requiere diagrama BPMN completo</div>
+      <div class="legend-item"><span class="dot parcial"></span> Requiere BPMN solo en una parte</div>
+      <div class="legend-item"><span class="dot no"></span> No requiere diagrama BPMN</div>
+    </div>
+  </div>
+</body>
+</html>
