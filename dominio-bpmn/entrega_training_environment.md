@@ -17,7 +17,7 @@ El dominio **Training Environment** es el núcleo encargado de la gestión de am
 A continuación, se presenta el modelo BPMN que representa el funcionamiento de extremo a extremo del dominio **Training Environment**. Este modelo documenta el proceso funcional, aunque la implementación técnica se basa en transacciones directas y eventos.
 
 ```mermaid
-bpmn
+sequenceDiagram
     participant Usuario as "Usuario / Administrador"
     participant DominioTE as "Dominio: Training Environment"
     participant Dependencias as "Dependencias (IAM / Ref Data)"
