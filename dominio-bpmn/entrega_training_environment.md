@@ -17,47 +17,49 @@ El dominio **Training Environment** es el núcleo encargado de la gestión de am
 A continuación, se presenta el modelo BPMN que representa el funcionamiento de extremo a extremo del dominio **Training Environment**. Este modelo documenta el proceso funcional, aunque la implementación técnica se basa en transacciones directas y eventos.
 
 ```mermaid
-sequenceDiagram
-    participant Usuario as "Usuario / Administrador"
-    participant DominioTE as "Dominio: Training Environment"
-    participant Dependencias as "Dependencias (IAM / Ref Data)"
-    participant EventBus as "Bus de Eventos"
+flowchart TD
+    %% Definición de estilos para simular BPMN
+    classDef startEvent fill:#90EE90,stroke:#333,stroke-width:2px,shape:circle;
+    classDef endEvent fill:#FFB6C1,stroke:#333,stroke-width:4px,shape:circle;
+    classDef gateway fill:#FFD700,stroke:#333,stroke-width:2px,shape:diamond;
+    classDef task fill:#E6E6FA,stroke:#333,stroke-width:1px,shape:rect,rx:5px,ry:5px;
+    classDef pool fill:#f9f9f9,stroke:#333,stroke-width:2px;
 
-    Usuario ->> DominioTE: Selecciona Operación
-    activate DominioTE
-    
-    alt Operación: Crear/Actualizar Ambiente
-        DominioTE ->> Dependencias: Validar permisos (IAM) y Sedes (Ref Data)
-        Dependencias -->> DominioTE: Datos OK
-        DominioTE ->> DominioTE: Persistir cambios del ambiente
-        DominioTE ->> EventBus: Emitir 'EnvironmentCreated/Updated'
-        
-    else Operación: Registrar Disponibilidad
-        DominioTE ->> DominioTE: Validar reglas lógicas de horario
-        DominioTE ->> DominioTE: Persistir disponibilidad
-        DominioTE ->> EventBus: Emitir 'AvailabilityUpdated'
-        
-    else Operación: Programar Mantenimiento
-        DominioTE ->> DominioTE: Validar conflictos con reservas existentes
-        alt Hay Conflicto
-            DominioTE -->> Usuario: Error: Ambiente ocupado
-        else Sin Conflicto
-            DominioTE ->> DominioTE: Bloquear ambiente
-            DominioTE ->> EventBus: Emitir 'MaintenanceScheduled'
-        end
-        
-    else Operación: Crear Reserva
-        DominioTE ->> DominioTE: Validar disponibilidad, mantenimientos y solapamientos (DB constraints)
-        alt Conflicto detectado
-            DominioTE -->> Usuario: Rechazo: Regla de integridad violada
-        else Sin Conflictos
-            DominioTE ->> DominioTE: Confirmar Reserva
-            DominioTE ->> EventBus: Emitir 'ReservationCreated'
-        end
+    subgraph S1 [Usuario / Administrador]
+        direction LR
+        Start(( )):::startEvent --> T1(Seleccionar <br/>Operación):::task
     end
-    
-    DominioTE -->> Usuario: Confirmación de operación exitosa
-    deactivate DominioTE
+
+    subgraph S2 [Training Environment]
+        direction TB
+        GW1{Tipo de <br/>Operación}:::gateway
+        
+        T1 --> GW1
+        
+        GW1 -->|Crear Ambiente| T2(Validar Permisos <br/>y Sede):::task
+        GW1 -->|Disponibilidad| T3(Validar <br/>Reglas de Horario):::task
+        GW1 -->|Mantenimiento| T4(Validar Conflictos <br/>de Mantenimiento):::task
+        GW1 -->|Reserva| T5(Validar <br/>Solapamientos):::task
+
+        T2 --> GW2{¿Datos OK?}:::gateway
+        T3 --> T6(Persistir Disponibilidad):::task
+        T4 --> GW3{¿Conflicto?}:::gateway
+        T5 --> GW4{¿Solapamiento?}:::gateway
+
+        GW2 -->|Sí| T7(Persistir Ambiente):::task
+        GW2 -->|No| End1(( )):::endEvent
+
+        GW3 -->|No| T8(Bloquear Ambiente):::task
+        GW3 -->|Sí| End2(( )):::endEvent
+
+        GW4 -->|No| T9(Confirmar Reserva):::task
+        GW4 -->|Sí| End3(( )):::endEvent
+
+        T7 --> End4(( )):::endEvent
+        T6 --> End4
+        T8 --> End4
+        T9 --> End4
+    end
 ```
 
 ---
