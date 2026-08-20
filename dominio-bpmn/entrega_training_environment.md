@@ -16,51 +16,15 @@ El dominio **Training Environment** es el núcleo encargado de la gestión de am
 
 A continuación, se presenta el modelo BPMN que representa el funcionamiento de extremo a extremo del dominio **Training Environment**. Este modelo documenta el proceso funcional, aunque la implementación técnica se basa en transacciones directas y eventos.
 
-```mermaid
-flowchart TD
-    %% Definición de estilos para simular BPMN
-    classDef startEvent fill:#90EE90,stroke:#333,stroke-width:2px,shape:circle;
-    classDef endEvent fill:#FFB6C1,stroke:#333,stroke-width:4px,shape:circle;
-    classDef gateway fill:#FFD700,stroke:#333,stroke-width:2px,shape:diamond;
-    classDef task fill:#E6E6FA,stroke:#333,stroke-width:1px,shape:rect,rx:5px,ry:5px;
-    classDef pool fill:#f9f9f9,stroke:#333,stroke-width:2px;
+![Diagrama BPMN Training Environment](./diagrama_bpmn.drawio.png)
 
-    subgraph S1 [Usuario / Administrador]
-        direction LR
-        Start(( )):::startEvent --> T1(Seleccionar <br/>Operación):::task
-    end
-
-    subgraph S2 [Training Environment]
-        direction TB
-        GW1{Tipo de <br/>Operación}:::gateway
-        
-        T1 --> GW1
-        
-        GW1 -->|Crear Ambiente| T2(Validar Permisos <br/>y Sede):::task
-        GW1 -->|Disponibilidad| T3(Validar <br/>Reglas de Horario):::task
-        GW1 -->|Mantenimiento| T4(Validar Conflictos <br/>de Mantenimiento):::task
-        GW1 -->|Reserva| T5(Validar <br/>Solapamientos):::task
-
-        T2 --> GW2{¿Datos OK?}:::gateway
-        T3 --> T6(Persistir Disponibilidad):::task
-        T4 --> GW3{¿Conflicto?}:::gateway
-        T5 --> GW4{¿Solapamiento?}:::gateway
-
-        GW2 -->|Sí| T7(Persistir Ambiente):::task
-        GW2 -->|No| End1(( )):::endEvent
-
-        GW3 -->|No| T8(Bloquear Ambiente):::task
-        GW3 -->|Sí| End2(( )):::endEvent
-
-        GW4 -->|No| T9(Confirmar Reserva):::task
-        GW4 -->|Sí| End3(( )):::endEvent
-
-        T7 --> End4(( )):::endEvent
-        T6 --> End4
-        T8 --> End4
-        T9 --> End4
-    end
-```
+**Explicación del Diagrama BPMN:**
+Este diagrama mapea el ciclo de vida completo del dominio sin sesgos técnicos de implementación:
+- **Actores (Pools/Lanes):** Se separan claramente las responsabilidades del **Coordinador/Administrador** (quien dispara las solicitudes) y el **Sistema de Training Environment** (quien procesa y valida las reglas del dominio).
+- **Eventos de Inicio e Intermedios:** El proceso inicia con la solicitud de creación del ambiente. Adicionalmente, el diagrama contempla eventos intermedios (solicitudes asíncronas) que disparan las validaciones de mantenimiento y reservas a lo largo del tiempo.
+- **Actividades (Tareas):** Se mapean las fases clave (ej. Validar Permisos, Registrar Ambiente, Definir Disponibilidad, Bloquear Ambiente y Confirmar Reserva).
+- **Compuertas Lógicas (Gateways):** Se justifican las bifurcaciones críticas del dominio. Por ejemplo, al evaluar una reserva, la compuerta de decisión verifica explícitamente si existe un conflicto/solapamiento. En caso de cumplir, el flujo continúa hacia el éxito; en caso contrario, se ramifica hacia un evento de error o rechazo (respetando la regla de integridad del negocio).
+- **Eventos Finales:** Se delimitan claramente los cierres exitosos de cada operación frente a los cierres por error.
 
 ---
 
